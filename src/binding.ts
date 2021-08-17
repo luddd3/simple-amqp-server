@@ -4,16 +4,15 @@ import { ExchangeType } from './exchange'
 class Binding {
   private readonly exchange: string
   private readonly queue: string
-  private readonly topicRegex: RegExp
+  private readonly topicRegex?: RegExp
 
   constructor(bindFrame: Bind, exchangeType: ExchangeType) {
     this.exchange = bindFrame.exchange
     this.queue = bindFrame.queue
 
-    this.topicRegex =
-      exchangeType === ExchangeType.Topic
-        ? this.generateTopicRegex(bindFrame.routingKey)
-        : (this.topicRegex = new RegExp('.*'))
+    if (exchangeType === 'topic') {
+      this.topicRegex = this.generateTopicRegex(bindFrame.routingKey)
+    }
   }
 
   private generateTopicRegex(routingKey: string): RegExp {
@@ -31,6 +30,7 @@ class Binding {
     const exp = `^${topicRegex.join('.')}$`
     return new RegExp(exp)
   }
+
   public match(): boolean {
     return false
   }

@@ -1,33 +1,26 @@
 import { Declare } from './frames/exchange/declare'
 
-enum ExchangeType {
-  Direct,
-  Fanout,
-  Topic
-}
+type ExchangeType = 'direct' | 'fanout' | 'topic' | 'headers' | 'match'
 
 class Exchange {
-  private readonly stringToExchangeType = {
-    direct: ExchangeType.Direct,
-    fanout: ExchangeType.Fanout,
-    topic: ExchangeType.Topic
-  }
-
-  private readonly exchangeTypeToString = {
-    [ExchangeType.Direct]: 'direct',
-    [ExchangeType.Fanout]: 'fanout',
-    [ExchangeType.Topic]: 'topic'
-  }
   public readonly name: string
   public readonly type: ExchangeType
+  public readonly passive: boolean
+  public readonly durable: boolean
+  public readonly autoDelete: boolean
+  public readonly internal: boolean
+  public readonly noWait: boolean
+  public readonly arguments: object
 
   constructor(declaration: Declare) {
     this.name = declaration.exchange
-    this.type = this.getExchangeTypeFromString(declaration.type)
-  }
-
-  private getExchangeTypeFromString(type: 'direct' | 'fanout' | 'topic'): ExchangeType {
-    return this.stringToExchangeType[type]
+    this.type = declaration.type
+    this.passive = declaration.passive
+    this.durable = declaration.durable
+    this.autoDelete = declaration.autoDelete
+    this.internal = declaration.internal
+    this.noWait = declaration.noWait
+    this.arguments = declaration.arguments
   }
 }
 
