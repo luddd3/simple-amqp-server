@@ -127,6 +127,18 @@ class Connection extends EventEmitter {
     const hb = new HeartBeat(0).toBuffer()
     this.sendHeartBeat(heartBeatDelay, hb)
   }
+
+  public end (): Promise<void> {
+    this.socket.removeAllListeners('data')
+    return new Promise((resolve, reject) => {
+      this.socket.end((err?: Error) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve()
+      })
+    })
+  }
 }
 
 export { Connection }

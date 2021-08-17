@@ -4,6 +4,8 @@ import { Tune } from './frames/connection/tune'
 import { TuneOk } from './frames/connection/tune-ok'
 import { Open } from './frames/connection/open'
 import { OpenOk } from './frames/connection/open-ok'
+import { Close } from './frames/connection/close'
+import { CloseOk } from './frames/connection/close-ok'
 import { debug as d } from 'debug'
 
 const debug = d('sas:connection-method')
@@ -47,9 +49,17 @@ abstract class ConnectionMethods {
   public static secureOk(payload: Buffer, connection: Connection, _: number): void {
     throw new Error('SecureOk not implemented.')
   }
-  public static close(payload: Buffer, connection: Connection, _: number): void {
-    throw new Error('Close not implemented.')
+
+  public static close(payload: Buffer, connection: Connection, channelId: number): void {
+    const closeFrame = new Close(payload)
+    const closeOkFrame = new CloseOk()
+
+    debug('closeFrame', closeFrame)
+    debug('closeOk', closeOkFrame)
+    connection.send(closeOkFrame.toBuffer())
+    connection.end()
   }
+
   public static closeOk(payload: Buffer, connection: Connection, _: number): void {
     throw new Error('CloseOk not implemented.')
   }
