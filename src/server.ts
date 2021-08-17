@@ -1,5 +1,5 @@
 import { Connection } from './connection'
-import { Server as TCPServer, createServer, Socket } from 'net'
+import { Server as TCPServer, createServer, Socket, AddressInfo } from 'net'
 import { debug as d } from 'debug'
 import { onPublishCallback } from './onPublish'
 import { Exchange } from './exchange'
@@ -41,7 +41,7 @@ class Server {
     this.server = createServer(this.onNewConnection.bind(this))
   }
 
-  public async start(): Promise<void> {
+  public async start(): Promise<string | AddressInfo | null> {
     return new Promise((resolve, _) => {
       this.server.listen(this._port, '127.0.0.1', () => {
         const address = this.server.address()
@@ -50,7 +50,7 @@ class Server {
           this._port = address.port
         }
 
-        resolve()
+        resolve(address)
         debug(`Server started on ${this._port}.`)
       })
     })
